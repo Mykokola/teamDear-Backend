@@ -57,7 +57,6 @@ const currentUser = (req:Request,res:Response,next:NextFunction) => {
 }
 const addFriend = async (req:Request,res:Response,next:NextFunction) => {
     try{  
-
      const friendLogin:string =  req.body?.login
      const {_id,friends}:{_id:string,friends:any} = req.user[0]
     const friend = await (userService.getUserOption({login:friendLogin}))
@@ -78,7 +77,15 @@ const addFriend = async (req:Request,res:Response,next:NextFunction) => {
     }
     delete newFrined.password
     delete newFrined.friends
-    const addFriend = await userService.userUpdateById(_id,{friends:[...friends,newFrined]})
+    const fixNewFrined = {
+        avatarURL:newFrined.avatarURL,
+        name:newFrined.name,
+        surName:newFrined.surName,
+        bio:newFrined.bio,
+        _id:newFrined._id,
+        login:newFrined.login
+    }
+    const addFriend = await userService.userUpdateById(_id,{friends:[...friends,fixNewFrined]})
     res.status(200).json({
         user:'add successful'
     })
